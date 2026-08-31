@@ -26,6 +26,7 @@ export 'src/models/pagamento.dart';
 export 'src/models/pedido.dart';
 export 'src/models/pedido_compra.dart';
 export 'src/models/permissao.dart';
+export 'src/models/plataforma_app.dart';
 export 'src/models/produto.dart';
 export 'src/models/produto_imagem.dart';
 export 'src/models/produto_tag.dart';
