@@ -2,18 +2,17 @@ import '../models/cliente.dart';
 import '../utils/result.dart';
 
 abstract class IClienteRepository {
-  Future<Result<List<Cliente>>> listar(
-    String empresaId, {
-    String? busca,
-    String? lojaId,
-    bool? ativos,
-    int? page,
-    int? pageSize,
-  });
-
-  Future<Result<Cliente?>> buscarPorId(String id);
-  Future<Result<Cliente?>> buscarPorCpfCnpj(String cpfCnpj, String empresaId);
-  Future<Result<Cliente>> salvar(Cliente cliente);
   Future<Result<void>> deletar(String id);
-  Future<Result<void>> atualizarDebito(String clienteId, double valor);
+  Future<Result<Cliente?>> buscarPorIdCore(String id);
+  Stream<Result<List<Cliente>>> streamTodosCore();
+  Stream<Result<List<Cliente>>> streamPorLojaCore(String lojaId);
+  Future<Result<List<Cliente>>> buscarTodosCore(String lojaId);
+  Future<Result<List<Cliente>>> buscarPorNomeCore(String nome, String lojaId);
+  Future<Result<List<Cliente>>> buscarPaginadoCore({
+    required String lojaId,
+    required int limite,
+  });
+  Future<Result<Cliente?>> buscarPorCpfCnpjCore(String cpfCnpj, String lojaId);
+  Future<Result<void>> salvarCore(Cliente cliente);
+  Future<Result<Cliente?>> buscarPorTelefoneCore(String telefone, String lojaId);
 }

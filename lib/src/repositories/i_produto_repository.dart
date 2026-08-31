@@ -2,20 +2,15 @@ import '../models/produto.dart';
 import '../utils/result.dart';
 
 abstract class IProdutoRepository {
-  Future<Result<List<Produto>>> listar(
-    String lojaId, {
-    String? busca,
-    int? page,
-    int? pageSize,
-  });
-
-  Future<Result<Produto?>> buscarPorId(String id);
-  Future<Result<Produto?>> buscarPorCodigoBarras(String codigo, String lojaId);
-  Future<Result<Produto?>> buscarPorSku(String sku, String lojaId);
-  Future<Result<Produto>> salvar(Produto produto);
+  Future<Result<Produto>> salvarCore(Produto produto);
+  Future<Result<void>> atualizarEstoque(
+      String produtoId, String lojaId, int novaQuantidade);
   Future<Result<void>> deletar(String id);
-  Future<Result<void>> baixarEstoque(
-      String produtoId, String lojaId, double quantidade);
-  Future<Result<void>> reporEstoque(
-      String produtoId, String lojaId, double quantidade);
+  Future<Result<Produto?>> buscarPorIdCore(String id);
+  Future<Result<List<Produto>>> listarCore(String lojaId);
+  Stream<Result<List<Produto>>> streamPorLojaCore(String lojaId);
+  Future<Result<Produto?>> buscarPorCodigoBarrasCore(String codigo, String lojaId);
+  Future<Result<Produto?>> buscarPorSkuCore(String sku, String lojaId);
+  Future<Result<List<Produto>>> buscarPorNomeCore(String nome, String lojaId);
+  Future<Result<List<Produto>>> buscarTodosCore(String lojaId);
 }

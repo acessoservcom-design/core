@@ -63,4 +63,13 @@ class LogAcao {
         '${dt.second.toString().padLeft(2, '0')}.'
         '${dt.millisecond.toString().padLeft(3, '0')}Z';
   }
+
+  Map<String, dynamic> toMap() => toJson();
+
+  factory LogAcao.fromMap(Map<String, dynamic> map, {String? id}) {
+    return LogAcao.fromJson({
+      'id': id ?? map['id'] as String? ?? '',
+      ...map,
+    });
+  }
 }

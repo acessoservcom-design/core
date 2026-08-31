@@ -3,7 +3,9 @@ enum CaixaTurnoStatus { aberto, fechado }
 class CaixaTurno {
   final String id;
   final String lojaId;
+  final String empresaId;
   final String operadorId;
+  final String? operadorNome;
   final String? terminalId;
   final DateTime dataAbertura;
   final DateTime? dataFechamento;
@@ -22,7 +24,9 @@ class CaixaTurno {
   const CaixaTurno({
     required this.id,
     required this.lojaId,
+    this.empresaId = '',
     required this.operadorId,
+    this.operadorNome,
     this.terminalId,
     required this.dataAbertura,
     this.dataFechamento,
@@ -42,7 +46,9 @@ class CaixaTurno {
   CaixaTurno copyWith({
     String? id,
     String? lojaId,
+    String? empresaId,
     String? operadorId,
+    String? operadorNome,
     String? terminalId,
     DateTime? dataAbertura,
     DateTime? dataFechamento,
@@ -61,7 +67,9 @@ class CaixaTurno {
     return CaixaTurno(
       id: id ?? this.id,
       lojaId: lojaId ?? this.lojaId,
+      empresaId: empresaId ?? this.empresaId,
       operadorId: operadorId ?? this.operadorId,
+      operadorNome: operadorNome ?? this.operadorNome,
       terminalId: terminalId ?? this.terminalId,
       dataAbertura: dataAbertura ?? this.dataAbertura,
       dataFechamento: dataFechamento ?? this.dataFechamento,
@@ -83,7 +91,9 @@ class CaixaTurno {
     return <String, dynamic>{
       'id': id,
       'lojaId': lojaId,
+      'empresaId': empresaId,
       'operadorId': operadorId,
+      if (operadorNome != null) 'operadorNome': operadorNome,
       'terminalId': terminalId,
       'dataAbertura': _toIsoUtc(dataAbertura),
       'dataFechamento': dataFechamento != null ? _toIsoUtc(dataFechamento!) : null,
@@ -105,7 +115,9 @@ class CaixaTurno {
     return CaixaTurno(
       id: json['id'] as String,
       lojaId: json['lojaId'] as String,
+      empresaId: json['empresaId'] as String? ?? '',
       operadorId: json['operadorId'] as String,
+      operadorNome: json['operadorNome'] as String?,
       terminalId: json['terminalId'] as String?,
       dataAbertura: DateTime.parse(json['dataAbertura'] as String).toUtc(),
       dataFechamento: json['dataFechamento'] != null
@@ -142,6 +154,15 @@ class CaixaTurno {
           runtimeType == other.runtimeType &&
           id == other.id;
 
+  Map<String, dynamic> toMap() => toJson();
+
+  factory CaixaTurno.fromMap(Map<String, dynamic> map, {String? id}) {
+    return CaixaTurno.fromJson({
+      'id': id ?? map['id'] as String? ?? '',
+      ...map,
+    });
+  }
+
   @override
   int get hashCode => id.hashCode;
 }
@@ -153,6 +174,7 @@ enum CaixaMovimentoTipo {
 class CaixaMovimento {
   final String id;
   final String turnoId;
+  final String empresaId;
   final CaixaMovimentoTipo tipo;
   final double valor;
   final String formaPagamento;
@@ -163,6 +185,7 @@ class CaixaMovimento {
   const CaixaMovimento({
     required this.id,
     required this.turnoId,
+    this.empresaId = '',
     required this.tipo,
     required this.valor,
     this.formaPagamento = 'dinheiro',
@@ -175,6 +198,7 @@ class CaixaMovimento {
     return <String, dynamic>{
       'id': id,
       'turnoId': turnoId,
+      'empresaId': empresaId,
       'tipo': tipo.name,
       'valor': valor,
       'formaPagamento': formaPagamento,
@@ -188,6 +212,7 @@ class CaixaMovimento {
     return CaixaMovimento(
       id: json['id'] as String,
       turnoId: json['turnoId'] as String,
+      empresaId: json['empresaId'] as String? ?? '',
       tipo: CaixaMovimentoTipo.values.firstWhere((t) => t.name == json['tipo']),
       valor: (json['valor'] as num).toDouble(),
       formaPagamento: json['formaPagamento'] as String? ?? 'dinheiro',
@@ -195,6 +220,15 @@ class CaixaMovimento {
       descricao: json['descricao'] as String?,
       createdAt: DateTime.parse(json['createdAt'] as String).toUtc(),
     );
+  }
+
+  Map<String, dynamic> toMap() => toJson();
+
+  factory CaixaMovimento.fromMap(Map<String, dynamic> map, {String? id}) {
+    return CaixaMovimento.fromJson({
+      'id': id ?? map['id'] as String? ?? '',
+      ...map,
+    });
   }
 
   static String _toIsoUtc(DateTime dt) {

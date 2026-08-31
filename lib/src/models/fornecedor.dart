@@ -1,6 +1,7 @@
 class Fornecedor {
   final String id;
   final String empresaId;
+  final String? lojaId;
   final String nome;
   final String? cnpj;
   final String? contatoNome;
@@ -21,6 +22,7 @@ class Fornecedor {
   const Fornecedor({
     required this.id,
     required this.empresaId,
+    this.lojaId,
     required this.nome,
     this.cnpj,
     this.contatoNome,
@@ -42,6 +44,7 @@ class Fornecedor {
   Fornecedor copyWith({
     String? id,
     String? empresaId,
+    String? lojaId,
     String? nome,
     String? cnpj,
     String? contatoNome,
@@ -62,6 +65,7 @@ class Fornecedor {
     return Fornecedor(
       id: id ?? this.id,
       empresaId: empresaId ?? this.empresaId,
+      lojaId: lojaId ?? this.lojaId,
       nome: nome ?? this.nome,
       cnpj: cnpj ?? this.cnpj,
       contatoNome: contatoNome ?? this.contatoNome,
@@ -90,6 +94,7 @@ class Fornecedor {
       'createdAt': _toIsoUtc(createdAt),
       'updatedAt': _toIsoUtc(updatedAt),
     };
+    if (lojaId != null) map['lojaId'] = lojaId;
     if (cnpj != null) map['cnpj'] = cnpj;
     if (contatoNome != null) map['contatoNome'] = contatoNome;
     if (contatoTelefone != null) map['contatoTelefone'] = contatoTelefone;
@@ -109,11 +114,12 @@ class Fornecedor {
     return Fornecedor(
       id: json['id'] as String,
       empresaId: json['empresaId'] as String,
+      lojaId: json['lojaId'] as String?,
       nome: json['nome'] as String,
       cnpj: json['cnpj'] as String?,
-      contatoNome: json['contatoNome'] as String?,
-      contatoTelefone: json['contatoTelefone'] as String?,
-      contatoEmail: json['contatoEmail'] as String?,
+      contatoNome: (json['contatoNome'] ?? json['contato']) as String?,
+      contatoTelefone: (json['contatoTelefone'] ?? json['telefone']) as String?,
+      contatoEmail: (json['contatoEmail'] ?? json['email']) as String?,
       cep: json['cep'] as String?,
       logradouro: json['logradouro'] as String?,
       numero: json['numero'] as String?,
