@@ -1,3 +1,5 @@
+import 'safe_cast.dart';
+
 class Endereco {
   final String cep;
   final String logradouro;
@@ -156,9 +158,9 @@ class Cliente {
 
   factory Cliente.fromJson(Map<String, dynamic> json) {
     return Cliente(
-      id: json['id'] as String,
-      empresaId: json['empresaId'] as String,
-      nome: json['nome'] as String,
+      id: json['id'] as String? ?? '',
+      empresaId: json['empresaId'] as String? ?? '',
+      nome: json['nome'] as String? ?? '',
       cpfCnpj: json['cpfCnpj'] as String?,
       rg: json['rg'] as String?,
       email: json['email'] as String?,
@@ -167,21 +169,19 @@ class Cliente {
       endereco: json['endereco'] != null
           ? Endereco.fromJson(json['endereco'] as Map<String, dynamic>)
           : const Endereco(),
-      limiteCredito: (json['limiteCredito'] as num?)?.toDouble(),
+      limiteCredito: safeNum(json['limiteCredito'])?.toDouble(),
       tabelaPrecoId: json['tabelaPrecoId'] as String?,
-      debito: (json['debito'] as num?)?.toDouble() ?? 0.0,
+      debito: safeDouble(json['debito']),
       lojaIds: (json['lojaIds'] as List<dynamic>?)
-              ?.map((e) => e as String)
+              ?.map((e) => e.toString())
               .toList() ??
           [],
       observacao: json['observacao'] as String?,
-      ultimaCompra: json['ultimaCompra'] != null
-          ? DateTime.parse(json['ultimaCompra'] as String).toUtc()
-          : null,
-      pontos: json['pontos'] as int?,
-      ativo: json['ativo'] as bool? ?? true,
-      createdAt: DateTime.parse(json['createdAt'] as String).toUtc(),
-      updatedAt: DateTime.parse(json['updatedAt'] as String).toUtc(),
+      ultimaCompra: safeDate(json['ultimaCompra']),
+      pontos: safeInt(json['pontos']),
+      ativo: safeBool(json['ativo']),
+      createdAt: safeDateUtc(json['createdAt']),
+      updatedAt: safeDateUtc(json['updatedAt']),
     );
   }
 

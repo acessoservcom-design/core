@@ -1,3 +1,5 @@
+import 'safe_cast.dart';
+
 enum EstoqueMovimentacaoTipo {
   entrada, saida, transferencia_entrada, transferencia_saida, ajuste, inventario
 }
@@ -53,19 +55,19 @@ class EstoqueMovimentacao {
 
   factory EstoqueMovimentacao.fromJson(Map<String, dynamic> json) {
     return EstoqueMovimentacao(
-      id: json['id'] as String,
-      empresaId: json['empresaId'] as String,
-      lojaId: json['lojaId'] as String,
-      produtoId: json['produtoId'] as String,
+      id: json['id'] as String? ?? '',
+      empresaId: json['empresaId'] as String? ?? '',
+      lojaId: json['lojaId'] as String? ?? '',
+      produtoId: json['produtoId'] as String? ?? '',
       tipo: EstoqueMovimentacaoTipo.values.firstWhere((t) => t.name == json['tipo']),
-      quantidade: (json['quantidade'] as num).toDouble(),
-      saldoAnterior: (json['saldoAnterior'] as num).toDouble(),
-      saldoPosterior: (json['saldoPosterior'] as num).toDouble(),
+      quantidade: safeDouble(json['quantidade']),
+      saldoAnterior: safeDouble(json['saldoAnterior']),
+      saldoPosterior: safeDouble(json['saldoPosterior']),
       lojaDestinoId: json['lojaDestinoId'] as String?,
       observacao: json['observacao'] as String?,
       funcionarioId: json['funcionarioId'] as String?,
       referenciaId: json['referenciaId'] as String?,
-      createdAt: DateTime.parse(json['createdAt'] as String).toUtc(),
+      createdAt: safeDate(json['createdAt']) ?? DateTime.now().toUtc(),
     );
   }
 

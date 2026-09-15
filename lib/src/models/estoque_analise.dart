@@ -1,3 +1,5 @@
+import 'safe_cast.dart';
+
 class CicloData {
   final int cicloNumero;
   final DateTime? dataInicio;
@@ -15,11 +17,11 @@ class CicloData {
 
   factory CicloData.fromMap(Map<String, dynamic> map) {
     return CicloData(
-      cicloNumero: (map['cicloNumero'] as num?)?.toInt() ?? 0,
+      cicloNumero: safeInt(map['cicloNumero']),
       dataInicio: _parseTs(map['dataInicio']),
       dataFim: _parseTs(map['dataFim']),
-      totalVendido: (map['totalVendido'] as num?)?.toInt() ?? 0,
-      velocidade: (map['velocidade'] as num?)?.toDouble() ?? 0,
+      totalVendido: safeInt(map['totalVendido']),
+      velocidade: safeDouble(map['velocidade']),
     );
   }
 
@@ -29,10 +31,10 @@ class CicloData {
     if (value is String) return DateTime.tryParse(value);
     if (value is Map) {
       if (value.containsKey('seconds')) {
-        return DateTime.fromMillisecondsSinceEpoch((value['seconds'] as int) * 1000);
+        return DateTime.fromMillisecondsSinceEpoch(safeInt(value['seconds']) * 1000);
       }
       if (value.containsKey('_seconds')) {
-        return DateTime.fromMillisecondsSinceEpoch((value['_seconds'] as int) * 1000);
+        return DateTime.fromMillisecondsSinceEpoch(safeInt(value['_seconds']) * 1000);
       }
     }
     return null;
@@ -114,15 +116,19 @@ class EstoqueAnalise {
       empresaId: map['empresaId'] as String? ?? '',
       lojaId: map['lojaId'] as String? ?? '',
       produtoId: map['produtoId'] as String? ?? '',
-      produtoNome: map['produtoNome'] as String? ?? '',
+      produtoNome: (map['produtoNome'] as String?) ??
+            (map['nomeProduto'] as String?) ??
+            (map['nome'] as String?) ??
+            (map['produto_nome'] as String?) ??
+            '',
       classificacao: map['classificacao'] as String? ?? 'C',
       classificacaoSugerida: map['classificacaoSugerida'] as String?,
-      velocidadeVenda: (map['velocidadeVenda'] as num?)?.toDouble() ?? 0,
-      totalVendidoPeriodo: (map['totalVendidoPeriodo'] as num?)?.toInt() ?? 0,
-      estoqueAtual: (map['estoqueAtual'] as num?)?.toInt() ?? 0,
-      estoqueMinimo: (map['estoqueMinimo'] as num?)?.toInt() ?? 0,
-      estoqueDias: (map['estoqueDias'] as num?)?.toInt() ?? 0,
-      sugeridoCompra: (map['sugeridoCompra'] as num?)?.toInt() ?? 0,
+      velocidadeVenda: safeDouble(map['velocidadeVenda']),
+      totalVendidoPeriodo: safeInt(map['totalVendidoPeriodo']),
+      estoqueAtual: safeInt(map['estoqueAtual']),
+      estoqueMinimo: safeInt(map['estoqueMinimo']),
+      estoqueDias: safeInt(map['estoqueDias']),
+      sugeridoCompra: safeInt(map['sugeridoCompra']),
       ultimoCalculo: map['ultimoCalculo'] != null
           ? _parseTimestamp(map['ultimoCalculo'])
           : null,
@@ -132,19 +138,19 @@ class EstoqueAnalise {
       classificadoPor: map['classificadoPor'] as String?,
       fornecedorId: map['fornecedorId'] as String?,
       fornecedorNome: map['fornecedorNome'] as String?,
-      alertaCritico: map['alertaCritico'] as bool? ?? false,
-      periodoAnaliseDias: (map['periodoAnaliseDias'] as num?)?.toInt(),
-      mediaGlobal: (map['mediaGlobal'] as num?)?.toDouble(),
-      desvioPercentual: (map['desvioPercentual'] as num?)?.toDouble(),
-      alertaDesvio: map['alertaDesvio'] as bool? ?? false,
+      alertaCritico: safeBool(map['alertaCritico'], false),
+      periodoAnaliseDias: safeInt(map['periodoAnaliseDias']),
+      mediaGlobal: safeDouble(map['mediaGlobal']),
+      desvioPercentual: safeDouble(map['desvioPercentual']),
+      alertaDesvio: safeBool(map['alertaDesvio'], false),
       ciclos: (map['ciclos'] as List<dynamic>?)
               ?.map((c) => CicloData.fromMap(Map<String, dynamic>.from(c as Map)))
               .toList() ??
           [],
       tendencia: map['tendencia'] as String?,
-      variacaoPercentual: (map['variacaoPercentual'] as num?)?.toDouble(),
-      ciclosConsecutivos: (map['ciclosConsecutivos'] as num?)?.toInt() ?? 0,
-      alarmeReclassificacao: map['alarmeReclassificacao'] as bool? ?? false,
+      variacaoPercentual: safeDouble(map['variacaoPercentual']),
+      ciclosConsecutivos: safeInt(map['ciclosConsecutivos']),
+      alarmeReclassificacao: safeBool(map['alarmeReclassificacao'], false),
     );
   }
 
@@ -153,7 +159,7 @@ class EstoqueAnalise {
     if (value is DateTime) return value;
     if (value is String) return DateTime.tryParse(value);
     if (value is Map && value.containsKey('seconds')) {
-      return DateTime.fromMillisecondsSinceEpoch((value['seconds'] as int) * 1000);
+      return DateTime.fromMillisecondsSinceEpoch(safeInt(value['seconds']) * 1000);
     }
     return null;
   }
@@ -275,11 +281,11 @@ class AnaliseEstoqueConfig {
       id: map['id'] as String?,
       empresaId: map['empresaId'] as String? ?? '',
       lojaId: map['lojaId'] as String? ?? '',
-      periodoAnaliseDias: (map['periodoAnaliseDias'] as num?)?.toInt() ?? 30,
-      diasEstoqueMinimo: (map['diasEstoqueMinimo'] as num?)?.toInt() ?? 7,
-      notificacaoAtiva: map['notificacaoAtiva'] as bool? ?? true,
-      intervaloNotificacaoMinutos: (map['intervaloNotificacaoMinutos'] as num?)?.toInt() ?? 60,
-      ciclosMinimosReclassificacao: (map['ciclosMinimosReclassificacao'] as num?)?.toInt() ?? 3,
+      periodoAnaliseDias: safeInt(map['periodoAnaliseDias'], 30),
+      diasEstoqueMinimo: safeInt(map['diasEstoqueMinimo'], 7),
+      notificacaoAtiva: safeBool(map['notificacaoAtiva'], true),
+      intervaloNotificacaoMinutos: safeInt(map['intervaloNotificacaoMinutos'], 60),
+      ciclosMinimosReclassificacao: safeInt(map['ciclosMinimosReclassificacao'], 3),
     );
   }
 
@@ -299,9 +305,11 @@ class VendaDiaria {
   const VendaDiaria({required this.data, required this.quantidade});
 
   factory VendaDiaria.fromMap(Map<String, dynamic> map) {
+    final dataStr = map['data'] as String?;
+    final parsed = dataStr != null ? DateTime.tryParse(dataStr) : null;
     return VendaDiaria(
-      data: DateTime.parse(map['data'] as String),
-      quantidade: (map['quantidade'] as num?)?.toInt() ?? 0,
+      data: parsed ?? DateTime.now(),
+      quantidade: safeInt(map['quantidade']),
     );
   }
 }

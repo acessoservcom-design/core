@@ -1,3 +1,5 @@
+import 'safe_cast.dart';
+
 class ContaPagar {
   final String id;
   final String uid;
@@ -34,17 +36,13 @@ class ContaPagar {
       lojaId: json['lojaId'] ?? '',
       fornecedorId: json['fornecedorId'],
       fornecedorNome: json['fornecedorNome'],
-      vencimento: json['vencimento'] != null
-          ? DateTime.parse(json['vencimento'])
-          : DateTime.now(),
+      vencimento: safeDate(json['vencimento']) ?? DateTime.now(),
       valor: (json['valor'] ?? 0).toDouble(),
       status: json['status'] ?? 'aberto',
       categoria: json['categoria'] ?? '',
       notaFiscalId: json['notaFiscalId'],
       observacao: json['observacao'],
-      dataPagamento: json['dataPagamento'] != null
-          ? DateTime.parse(json['dataPagamento'])
-          : null,
+      dataPagamento: safeDate(json['dataPagamento']),
     );
   }
 

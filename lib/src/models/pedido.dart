@@ -1,3 +1,5 @@
+import 'safe_cast.dart';
+
 enum PedidoStatus {
   rascunho,
   atendimento,
@@ -186,58 +188,77 @@ class Pedido {
   }
 
   factory Pedido.fromJson(Map<String, dynamic> json) {
+    String s(Map<String, dynamic> j, String c, String sc, [String d = '']) {
+      final v = j[c] ?? j[sc];
+      if (v == null) return d;
+      return v.toString();
+    }
+    String? sn(Map<String, dynamic> j, String c, String sc) {
+      final v = j[c] ?? j[sc];
+      if (v == null) return null;
+      return v.toString();
+    }
+    num? n(Map<String, dynamic> j, String c, String sc) {
+      final v = j[c] ?? j[sc];
+      if (v == null) return null;
+      if (v is num) return v;
+      if (v is String) return num.tryParse(v);
+      return null;
+    }
     return Pedido(
-      id: json['id'] as String,
-      empresaId: json['empresaId'] as String,
-      lojaId: json['lojaId'] as String,
-      lojaNome: json['lojaNome'] as String?,
-      fornecedorId: json['fornecedorId'] as String?,
-      clienteId: json['clienteId'] as String?,
-      clienteNome: json['clienteNome'] as String?,
-      clienteTelefone: json['clienteTelefone'] as String?,
-      clienteEmail: json['clienteEmail'] as String?,
-      codigo: (json['codigo'] as num).toInt(),
+      id: s(json, 'id', 'id'),
+      empresaId: s(json, 'empresaId', 'empresa_id'),
+      lojaId: s(json, 'lojaId', 'loja_id'),
+      lojaNome: sn(json, 'lojaNome', 'loja_nome'),
+      fornecedorId: sn(json, 'fornecedorId', 'fornecedor_id'),
+      clienteId: sn(json, 'clienteId', 'cliente_id'),
+      clienteNome: sn(json, 'clienteNome', 'cliente_nome'),
+      clienteTelefone: sn(json, 'clienteTelefone', 'cliente_telefone'),
+      clienteEmail: sn(json, 'clienteEmail', 'cliente_email'),
+      codigo: n(json, 'codigo', 'codigo')?.toInt() ?? 0,
       status: PedidoStatus.values.firstWhere(
         (e) => e.name == json['status'],
         orElse: () => PedidoStatus.rascunho,
       ),
-      itens: (json['itens'] as List<dynamic>)
-          .map((e) => ItemPedido.fromJson(e as Map<String, dynamic>))
-          .toList(),
+      itens: (json['itens'] as List<dynamic>?)
+              ?.map((e) => ItemPedido.fromJson(Map<String, dynamic>.from(e as Map)))
+              .toList() ??
+          [],
       imagensReferencia: (json['imagensReferencia'] as List<dynamic>?)
-              ?.map((e) => e as String)
+              ?.map((e) => e.toString())
               .toList() ??
           [],
-      pagamentos: (json['pagamentos'] as List<dynamic>)
-          .map((e) => PagamentoPedido.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      desconto: (json['desconto'] as num?)?.toDouble() ?? 0.0,
-      frete: (json['frete'] as num?)?.toDouble() ?? 0.0,
-      total: (json['total'] as num?)?.toDouble() ?? 0.0,
-      pago: (json['pago'] as num?)?.toDouble() ?? 0.0,
-      observacao: json['observacao'] as String?,
-      previsaoEntrega: json['previsaoEntrega'] != null
-          ? DateTime.parse(json['previsaoEntrega'] as String).toUtc()
-          : null,
-      createdAt: DateTime.parse(json['createdAt'] as String).toUtc(),
-      updatedAt: json['updatedAt'] != null
-          ? DateTime.parse(json['updatedAt'] as String).toUtc()
-          : null,
-      finalizadoEm: json['finalizadoEm'] != null
-          ? DateTime.parse(json['finalizadoEm'] as String).toUtc()
-          : null,
-      vendedorId: json['vendedorId'] as String?,
-      vendedorNome: json['vendedorNome'] as String?,
+      pagamentos: (json['pagamentos'] as List<dynamic>?)
+              ?.map((e) => PagamentoPedido.fromJson(Map<String, dynamic>.from(e as Map)))
+              .toList() ??
+          [],
+      desconto: n(json, 'desconto', 'desconto')?.toDouble() ?? 0.0,
+      frete: n(json, 'frete', 'frete')?.toDouble() ?? 0.0,
+      total: n(json, 'total', 'total')?.toDouble() ?? 0.0,
+      pago: n(json, 'pago', 'pago')?.toDouble() ?? 0.0,
+      observacao: sn(json, 'observacao', 'observacao'),
+      previsaoEntrega: _parseDate(json, 'previsaoEntrega', 'previsao_entrega'),
+      createdAt: _parseDate(json, 'createdAt', 'created_at') ?? DateTime.now().toUtc(),
+      updatedAt: _parseDate(json, 'updatedAt', 'updated_at'),
+      finalizadoEm: _parseDate(json, 'finalizadoEm', 'finalizado_em'),
+      vendedorId: sn(json, 'vendedorId', 'vendedor_id'),
+      vendedorNome: sn(json, 'vendedorNome', 'vendedor_nome'),
       lancamentoIds: (json['lancamentoIds'] as List<dynamic>?)
-              ?.map((e) => e as String)
+              ?.map((e) => e.toString())
               .toList() ??
           [],
-      nfceChave: json['nfceChave'] as String?,
-      nfceProtocolo: json['nfceProtocolo'] as String?,
-      nfceXml: json['nfceXml'] as String?,
-      nfceStatus: json['nfceStatus'] as String?,
-      arteStatus: json['arteStatus'] as String?,
+      nfceChave: sn(json, 'nfceChave', 'nfce_chave'),
+      nfceProtocolo: sn(json, 'nfceProtocolo', 'nfce_protocolo'),
+      nfceXml: sn(json, 'nfceXml', 'nfce_xml'),
+      nfceStatus: sn(json, 'nfceStatus', 'nfce_status'),
+      arteStatus: sn(json, 'arteStatus', 'arte_status'),
     );
+  }
+
+  static DateTime? _parseDate(Map<String, dynamic> j, String c, String s) {
+    final v = j[c] ?? j[s];
+    if (v == null) return null;
+    return DateTime.tryParse(v.toString())?.toUtc();
   }
 
   @override
@@ -311,16 +332,28 @@ class ItemPedido {
   }
 
   factory ItemPedido.fromJson(Map<String, dynamic> json) {
+    String s(String c, String sn, [String d = '']) {
+      final v = json[c] ?? json[sn];
+      if (v == null) return d;
+      return v.toString();
+    }
+    num? n(String c, [String? sn]) {
+      final v = json[c] ?? (sn != null ? json[sn] : null);
+      if (v == null) return null;
+      if (v is num) return v;
+      if (v is String) return num.tryParse(v);
+      return null;
+    }
     return ItemPedido(
-      id: json['id'] as String,
-      produtoId: json['produtoId'] as String,
-      nome: json['nome'] as String,
-      quantidade: (json['quantidade'] as num).toDouble(),
-      precoUnitario: (json['precoUnitario'] as num).toDouble(),
-      total: (json['total'] as num).toDouble(),
-      personalizacao: json['personalizacao'] as String? ?? '',
-      variacaoTipo: json['variacaoTipo'] as String?,
-      variacaoValor: json['variacaoValor'] as String?,
+      id: s('id', 'id'),
+      produtoId: s('produtoId', 'produto_id'),
+      nome: s('nome', 'nome'),
+      quantidade: n('quantidade', 'quantity')?.toDouble() ?? 0,
+      precoUnitario: n('precoUnitario', 'preco_unitario')?.toDouble() ?? 0,
+      total: n('total')?.toDouble() ?? 0,
+      personalizacao: json['personalizacao']?.toString() ?? '',
+      variacaoTipo: json['variacaoTipo']?.toString() ?? json['variacao_tipo']?.toString(),
+      variacaoValor: json['variacaoValor']?.toString() ?? json['variacao_valor']?.toString(),
     );
   }
 
@@ -387,14 +420,29 @@ class PagamentoPedido {
   }
 
   factory PagamentoPedido.fromJson(Map<String, dynamic> json) {
+    String s(String c, String sn, [String d = '']) {
+      final v = json[c] ?? json[sn];
+      if (v == null) return d;
+      return v.toString();
+    }
+    final dataStr = json['data']?.toString() ?? '';
+    final valorV = json['valor'];
+    double valorParsed;
+    if (valorV is num) {
+      valorParsed = valorV.toDouble();
+    } else if (valorV is String) {
+      valorParsed = double.tryParse(valorV) ?? 0;
+    } else {
+      valorParsed = 0;
+    }
     return PagamentoPedido(
-      id: json['id'] as String,
-      forma: json['forma'] as String,
-      valor: (json['valor'] as num).toDouble(),
-      parcelas: json['parcelas'] as int?,
-      comprovanteUrl: json['comprovanteUrl'] as String?,
-      data: DateTime.parse(json['data'] as String).toUtc(),
-      maquininha: json['maquininha'] as String?,
+      id: s('id', 'id'),
+      forma: s('forma', 'forma'),
+      valor: valorParsed,
+      parcelas: safeInt(json['parcelas']),
+      comprovanteUrl: json['comprovanteUrl']?.toString() ?? json['comprovante_url']?.toString(),
+      data: DateTime.tryParse(dataStr)?.toUtc() ?? DateTime.now().toUtc(),
+      maquininha: json['maquininha']?.toString(),
     );
   }
 

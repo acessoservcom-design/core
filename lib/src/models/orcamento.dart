@@ -1,3 +1,5 @@
+import 'safe_cast.dart';
+
 enum OrcamentoStatus { rascunho, enviado, aprovado, recusado, convertido, expirado }
 
 class Orcamento {
@@ -100,27 +102,27 @@ class Orcamento {
         id: m['id'] as String? ?? '',
         produtoId: m['produtoId'] as String? ?? '',
         nome: m['nome'] as String? ?? '',
-        quantidade: (m['quantidade'] as num?)?.toDouble() ?? 1.0,
-        precoUnitario: (m['precoUnitario'] as num?)?.toDouble() ?? 0.0,
-        total: (m['total'] as num?)?.toDouble() ?? 0.0,
+        quantidade: safeDouble(m['quantidade'], 1.0),
+        precoUnitario: safeDouble(m['precoUnitario']),
+        total: safeDouble(m['total']),
       );
     }).toList();
 
     return Orcamento(
-      id: json['id'] as String,
-      empresaId: json['empresaId'] as String,
-      lojaId: json['lojaId'] as String,
+      id: json['id'] as String? ?? '',
+      empresaId: json['empresaId'] as String? ?? '',
+      lojaId: json['lojaId'] as String? ?? '',
       funcionarioId: json['funcionarioId'] as String?,
       clienteId: json['clienteId'] as String?,
-      codigo: (json['codigo'] as num).toInt(),
+      codigo: safeInt(json['codigo']),
       status: status,
       itens: itens,
-      desconto: (json['desconto'] as num?)?.toDouble() ?? 0.0,
-      total: (json['total'] as num?)?.toDouble() ?? 0.0,
+      desconto: safeDouble(json['desconto']),
+      total: safeDouble(json['total']),
       observacao: json['observacao'] as String?,
-      validoAte: DateTime.parse(json['validoAte'] as String),
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      updatedAt: DateTime.parse(json['updatedAt'] as String),
+      validoAte: safeDate(json['validoAte']) ?? DateTime.now().toUtc(),
+      createdAt: safeDate(json['createdAt']) ?? DateTime.now().toUtc(),
+      updatedAt: safeDate(json['updatedAt']) ?? DateTime.now().toUtc(),
     );
   }
 
@@ -181,12 +183,12 @@ class OrcamentoItem {
 
   factory OrcamentoItem.fromJson(Map<String, dynamic> json) {
     return OrcamentoItem(
-      id: json['id'] as String,
-      produtoId: json['produtoId'] as String,
-      nome: json['nome'] as String,
-      quantidade: (json['quantidade'] as num).toDouble(),
-      precoUnitario: (json['precoUnitario'] as num).toDouble(),
-      total: (json['total'] as num).toDouble(),
+      id: json['id'] as String? ?? '',
+      produtoId: json['produtoId'] as String? ?? '',
+      nome: json['nome'] as String? ?? '',
+      quantidade: safeDouble(json['quantidade']),
+      precoUnitario: safeDouble(json['precoUnitario']),
+      total: safeDouble(json['total']),
     );
   }
 

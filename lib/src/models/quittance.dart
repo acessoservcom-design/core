@@ -1,3 +1,5 @@
+import 'safe_cast.dart';
+
 class Quittance {
   final String? id;
   final String clienteId;
@@ -54,14 +56,14 @@ class Quittance {
   factory Quittance.fromMap(Map<String, dynamic> map, {String? id}) {
     return Quittance(
       id: id ?? map['id'] as String?,
-      clienteId: map['clienteId'] as String,
-      clienteNome: map['clienteNome'] as String,
+      clienteId: map['clienteId'] as String? ?? '',
+      clienteNome: map['clienteNome'] as String? ?? '',
       clienteCpf: map['clienteCpf'] as String?,
-      valor: (map['valor'] as num).toDouble(),
-      debitoRestante: (map['debitoRestante'] as num?)?.toDouble() ?? 0,
+      valor: safeDouble(map['valor']),
+      debitoRestante: safeDouble(map['debitoRestante']),
       data: _parseDate(map['data']) ?? DateTime.now(),
       operador: map['operador'] as String? ?? '',
-      lojaId: map['lojaId'] as String,
+      lojaId: map['lojaId'] as String? ?? '',
       uid: map['uid'] as String? ?? '',
       empresaId: map['empresaId'] as String? ?? '',
       vendaId: map['vendaId'] as String?,

@@ -1,3 +1,5 @@
+import 'safe_cast.dart';
+
 class FiscalInfo {
   final String ncm;
   final String cfop;
@@ -39,10 +41,10 @@ class FiscalInfo {
       cfop: json['cfop'] as String? ?? '',
       cest: json['cest'] as String? ?? '',
       origem: json['origem'] as String? ?? '0',
-      icms: (json['icms'] as num?)?.toDouble(),
-      ipi: (json['ipi'] as num?)?.toDouble(),
-      pis: (json['pis'] as num?)?.toDouble(),
-      cofins: (json['cofins'] as num?)?.toDouble(),
+      icms: safeDouble(json['icms']),
+      ipi: safeDouble(json['ipi']),
+      pis: safeDouble(json['pis']),
+      cofins: safeDouble(json['cofins']),
     );
   }
 }
@@ -62,8 +64,8 @@ class PesosInfo {
 
   factory PesosInfo.fromJson(Map<String, dynamic> json) {
     return PesosInfo(
-      pesoLiquido: (json['pesoLiquido'] as num?)?.toDouble() ?? 0.0,
-      pesoBruto: (json['pesoBruto'] as num?)?.toDouble() ?? 0.0,
+      pesoLiquido: safeDouble(json['pesoLiquido']),
+      pesoBruto: safeDouble(json['pesoBruto']),
     );
   }
 }

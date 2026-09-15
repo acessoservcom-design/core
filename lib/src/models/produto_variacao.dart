@@ -1,3 +1,5 @@
+import 'safe_cast.dart';
+
 class ProdutoVariacao {
   final String id;
   final String tipo;
@@ -47,12 +49,12 @@ class ProdutoVariacao {
 
   factory ProdutoVariacao.fromJson(Map<String, dynamic> json) {
     return ProdutoVariacao(
-      id: json['id'] as String,
-      tipo: json['tipo'] as String,
-      valor: json['valor'] as String,
-      estoque: (json['estoque'] as num?)?.toInt(),
-      preco: (json['preco'] as num?)?.toDouble(),
-      precoCusto: (json['precoCusto'] as num?)?.toDouble(),
+      id: safeStr(json['id']),
+      tipo: safeStr(json['tipo']),
+      valor: safeStr(json['valor']),
+      estoque: safeInt(json['estoque']),
+      preco: safeDouble(json['preco']),
+      precoCusto: safeDouble(json['precoCusto']),
     );
   }
 

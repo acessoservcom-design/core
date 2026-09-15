@@ -1,3 +1,5 @@
+import 'safe_cast.dart';
+
 class Fornecedor {
   final String id;
   final String empresaId;
@@ -112,10 +114,10 @@ class Fornecedor {
 
   factory Fornecedor.fromJson(Map<String, dynamic> json) {
     return Fornecedor(
-      id: json['id'] as String,
-      empresaId: json['empresaId'] as String,
+      id: json['id'] as String? ?? '',
+      empresaId: json['empresaId'] as String? ?? '',
       lojaId: json['lojaId'] as String?,
-      nome: json['nome'] as String,
+      nome: json['nome'] as String? ?? '',
       cnpj: json['cnpj'] as String?,
       contatoNome: (json['contatoNome'] ?? json['contato']) as String?,
       contatoTelefone: (json['contatoTelefone'] ?? json['telefone']) as String?,
@@ -128,9 +130,9 @@ class Fornecedor {
       cidade: json['cidade'] as String?,
       estado: json['estado'] as String?,
       observacao: json['observacao'] as String?,
-      ativo: json['ativo'] as bool? ?? true,
-      createdAt: DateTime.parse(json['createdAt'] as String).toUtc(),
-      updatedAt: DateTime.parse(json['updatedAt'] as String).toUtc(),
+      ativo: safeBool(json['ativo'], true),
+      createdAt: safeDate(json['createdAt']) ?? DateTime.now().toUtc(),
+      updatedAt: safeDate(json['updatedAt']) ?? DateTime.now().toUtc(),
     );
   }
 

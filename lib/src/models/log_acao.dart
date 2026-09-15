@@ -1,3 +1,5 @@
+import 'safe_cast.dart';
+
 class LogAcao {
   final String id;
   final String empresaId;
@@ -41,16 +43,16 @@ class LogAcao {
 
   factory LogAcao.fromJson(Map<String, dynamic> json) {
     return LogAcao(
-      id: json['id'] as String,
-      empresaId: json['empresaId'] as String,
-      funcionarioId: json['funcionarioId'] as String?,
-      terminalId: json['terminalId'] as String?,
-      acao: json['acao'] as String,
-      entidadeTipo: json['entidadeTipo'] as String,
-      entidadeId: json['entidadeId'] as String?,
+      id: safeStr(json['id']),
+      empresaId: safeStr(json['empresaId']),
+      funcionarioId: safeStr(json['funcionarioId']),
+      terminalId: safeStr(json['terminalId']),
+      acao: safeStr(json['acao']),
+      entidadeTipo: safeStr(json['entidadeTipo']),
+      entidadeId: safeStr(json['entidadeId']),
       detalhes: json['detalhes'] as Map<String, dynamic>?,
-      ip: json['ip'] as String?,
-      createdAt: DateTime.parse(json['createdAt'] as String).toUtc(),
+      ip: safeStr(json['ip']),
+      createdAt: safeDate(json['createdAt']) ?? DateTime.now().toUtc(),
     );
   }
 

@@ -1,3 +1,5 @@
+import 'safe_cast.dart';
+
 class ContaReceber {
   final String id;
   final String uid;
@@ -30,15 +32,11 @@ class ContaReceber {
       lojaId: json['lojaId'] ?? '',
       clienteId: json['clienteId'],
       clienteNome: json['clienteNome'],
-      vencimento: json['vencimento'] != null
-          ? DateTime.parse(json['vencimento'])
-          : DateTime.now(),
+      vencimento: safeDate(json['vencimento']) ?? DateTime.now(),
       valor: (json['valor'] ?? 0).toDouble(),
       status: json['status'] ?? 'aberto',
       vendaId: json['vendaId'],
-      dataRecebimento: json['dataRecebimento'] != null
-          ? DateTime.parse(json['dataRecebimento'])
-          : null,
+      dataRecebimento: safeDate(json['dataRecebimento']),
     );
   }
 

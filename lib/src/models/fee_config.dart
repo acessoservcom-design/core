@@ -1,3 +1,5 @@
+import 'safe_cast.dart';
+
 class FeeDefaults {
   static const double pix = 0.0;
   static const double debito = 1.86;
@@ -55,21 +57,19 @@ class FeeConfig {
     final antecipacaoNested = map['antecipacao'] as Map<String, dynamic>?;
 
     return FeeConfig(
-      pix: (map['pix'] as num?)?.toDouble() ?? FeeDefaults.pix,
-      debito: (map['debito'] as num?)?.toDouble() ?? FeeDefaults.debito,
+      pix: safeDouble(map['pix'], FeeDefaults.pix),
+      debito: safeDouble(map['debito'], FeeDefaults.debito),
       credito: {
         for (int i = 1; i <= 12; i++)
           i: creditoNested != null
-              ? (creditoNested['${i}x'] as num?)?.toDouble() ?? FeeDefaults.credito[i]!
-              : (map['${i}x'] as num?)?.toDouble() ?? FeeDefaults.credito[i]!,
+              ? safeDouble(creditoNested['${i}x'], FeeDefaults.credito[i]!)
+              : safeDouble(map['${i}x'], FeeDefaults.credito[i]!),
       },
       antecipacao: {
         for (int i = 1; i <= 12; i++)
           i: antecipacaoNested != null
-              ? (antecipacaoNested['${i}x'] as num?)?.toDouble() ??
-                  FeeDefaults.antecipacao[i]!
-              : (map['ant_${i}x'] as num?)?.toDouble() ??
-                  FeeDefaults.antecipacao[i]!,
+              ? safeDouble(antecipacaoNested['${i}x'], FeeDefaults.antecipacao[i]!)
+              : safeDouble(map['ant_${i}x'], FeeDefaults.antecipacao[i]!),
       },
     );
   }

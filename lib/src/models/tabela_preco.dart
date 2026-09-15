@@ -1,3 +1,5 @@
+import 'safe_cast.dart';
+
 class TabelaPrecoItem {
   final String produtoId;
   final double preco;
@@ -14,8 +16,8 @@ class TabelaPrecoItem {
 
   factory TabelaPrecoItem.fromMap(Map<String, dynamic> map) {
     return TabelaPrecoItem(
-      produtoId: map['produtoId'] as String,
-      preco: (map['preco'] as num).toDouble(),
+      produtoId: map['produtoId'] as String? ?? '',
+      preco: safeDouble(map['preco']),
     );
   }
 }
@@ -61,13 +63,13 @@ class TabelaPreco {
 
     return TabelaPreco(
       id: id ?? map['id'] as String?,
-      nome: map['nome'] as String,
-      lojaId: map['lojaId'] as String,
+      nome: map['nome'] as String? ?? '',
+      lojaId: map['lojaId'] as String? ?? '',
       itens: itensRaw
           .map((i) => TabelaPrecoItem.fromMap(i as Map<String, dynamic>))
           .toList(),
-      clientesIds: clientesRaw.map((e) => e as String).toList(),
-      ativo: map['ativo'] as bool? ?? true,
+      clientesIds: clientesRaw.map((e) => e.toString()).toList(),
+      ativo: safeBool(map['ativo'], true),
       createdAt: _parseDate(map['createdAt']) ?? DateTime.now(),
     );
   }

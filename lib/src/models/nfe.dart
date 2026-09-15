@@ -1,3 +1,5 @@
+import 'safe_cast.dart';
+
 enum NFeStatus {
   rascunho,
   validando,
@@ -116,31 +118,31 @@ class NFeItem {
       };
 
   factory NFeItem.fromMap(Map<String, dynamic> map) => NFeItem(
-        produtoId: map['produtoId'] as String,
-        nome: map['nome'] as String,
-        ncm: map['ncm'] as String? ?? '00000000',
-        cfop: map['cfop'] as String? ?? '5102',
-        cest: map['cest'] as String? ?? '',
-        unidade: map['unidade'] as String? ?? 'UN',
-        quantidade: (map['quantidade'] as num?)?.toInt() ?? 0,
-        valorUnitario: (map['valorUnitario'] as num?)?.toDouble() ?? 0,
-        valorTotal: (map['valorTotal'] as num?)?.toDouble() ?? 0,
-        cEAN: map['cEAN'] as String? ?? '',
-        cEANTrib: map['cEANTrib'] as String? ?? '',
-        uTrib: map['uTrib'] as String? ?? 'UN',
-        qTrib: (map['qTrib'] as num?)?.toDouble() ?? 0,
-        vUnTrib: (map['vUnTrib'] as num?)?.toDouble() ?? 0,
-        icmsOrigem: (map['icmsOrigem'] as num?)?.toInt() ?? 0,
-        icmsCst: map['icmsCst'] as String? ?? '00',
-        icmsAliquota: (map['icmsAliquota'] as num?)?.toDouble() ?? 0,
-        icmsBase: (map['icmsBase'] as num?)?.toDouble() ?? 0,
-        icmsValor: (map['icmsValor'] as num?)?.toDouble() ?? 0,
-        ipiAliquota: (map['ipiAliquota'] as num?)?.toDouble(),
-        ipiValor: (map['ipiValor'] as num?)?.toDouble(),
-        pisAliquota: (map['pisAliquota'] as num?)?.toDouble(),
-        pisValor: (map['pisValor'] as num?)?.toDouble(),
-        cofinsAliquota: (map['cofinsAliquota'] as num?)?.toDouble(),
-        cofinsValor: (map['cofinsValor'] as num?)?.toDouble(),
+        produtoId: safeStr(map['produtoId']),
+        nome: safeStr(map['nome']),
+        ncm: safeStr(map['ncm'], '00000000'),
+        cfop: safeStr(map['cfop'], '5102'),
+        cest: safeStr(map['cest']),
+        unidade: safeStr(map['unidade'], 'UN'),
+        quantidade: safeInt(map['quantidade']),
+        valorUnitario: safeDouble(map['valorUnitario']),
+        valorTotal: safeDouble(map['valorTotal']),
+        cEAN: safeStr(map['cEAN']),
+        cEANTrib: safeStr(map['cEANTrib']),
+        uTrib: safeStr(map['uTrib'], 'UN'),
+        qTrib: safeDouble(map['qTrib']),
+        vUnTrib: safeDouble(map['vUnTrib']),
+        icmsOrigem: safeInt(map['icmsOrigem']),
+        icmsCst: safeStr(map['icmsCst'], '00'),
+        icmsAliquota: safeDouble(map['icmsAliquota']),
+        icmsBase: safeDouble(map['icmsBase']),
+        icmsValor: safeDouble(map['icmsValor']),
+        ipiAliquota: safeDouble(map['ipiAliquota']),
+        ipiValor: safeDouble(map['ipiValor']),
+        pisAliquota: safeDouble(map['pisAliquota']),
+        pisValor: safeDouble(map['pisValor']),
+        cofinsAliquota: safeDouble(map['cofinsAliquota']),
+        cofinsValor: safeDouble(map['cofinsValor']),
       );
 
   NFeItem copyWith({
@@ -217,8 +219,8 @@ class NFePagamento {
       };
 
   factory NFePagamento.fromMap(Map<String, dynamic> map) => NFePagamento(
-        forma: map['forma'] as String,
-        valor: (map['valor'] as num?)?.toDouble() ?? 0,
+        forma: safeStr(map['forma']),
+        valor: safeDouble(map['valor']),
         codigo: map['codigo'] as String?,
       );
 }
@@ -442,19 +444,19 @@ class NFe {
 
   factory NFe.fromMap(Map<String, dynamic> map, {String? id}) => NFe(
         id: id ?? map['id'] as String?,
-        empresaId: map['empresaId'] as String,
-        lojaId: (map['lojaId'] as String? ?? '').isNotEmpty
-            ? map['lojaId'] as String
-            : map['empresaId'] as String,
+        empresaId: safeStr(map['empresaId']),
+        lojaId: safeStr(map['lojaId']).isNotEmpty
+            ? safeStr(map['lojaId'])
+            : safeStr(map['empresaId']),
         uid: map['uid'] as String?,
-        chave: map['chave'] as String,
-        numero: (map['numero'] as num?)?.toInt() ?? 0,
-        serie: (map['serie'] as num?)?.toInt() ?? 0,
-        cNF: (map['cNF'] as num?)?.toInt() ?? 0,
-        modelo: map['modelo'] as String? ?? '55',
-        ambiente: (map['ambiente'] as num?)?.toInt() ?? 1,
-        finalidade: map['finalidade'] as String? ?? '1',
-        tipoEmissao: map['tipoEmissao'] as String? ?? '1',
+        chave: safeStr(map['chave']),
+        numero: safeInt(map['numero']),
+        serie: safeInt(map['serie']),
+        cNF: safeInt(map['cNF']),
+        modelo: safeStr(map['modelo'], '55'),
+        ambiente: safeInt(map['ambiente'], 1),
+        finalidade: safeStr(map['finalidade'], '1'),
+        tipoEmissao: safeStr(map['tipoEmissao'], '1'),
         destinatarioNome: map['destinatarioNome'] as String?,
         destinatarioDoc: map['destinatarioDoc'] as String?,
         destinatarioIE: map['destinatarioIE'] as String?,
@@ -469,12 +471,12 @@ class NFe {
                 ?.map((e) => NFeItem.fromMap(Map<String, dynamic>.from(e)))
                 .toList() ??
             [],
-        valorTotal: (map['valorTotal'] as num?)?.toDouble() ?? 0,
-        baseICMS: (map['baseICMS'] as num?)?.toDouble() ?? 0,
-        valorICMS: (map['valorICMS'] as num?)?.toDouble() ?? 0,
-        valorIPI: (map['valorIPI'] as num?)?.toDouble() ?? 0,
-        valorPIS: (map['valorPIS'] as num?)?.toDouble() ?? 0,
-        valorCOFINS: (map['valorCOFINS'] as num?)?.toDouble() ?? 0,
+        valorTotal: safeDouble(map['valorTotal']),
+        baseICMS: safeDouble(map['baseICMS']),
+        valorICMS: safeDouble(map['valorICMS']),
+        valorIPI: safeDouble(map['valorIPI']),
+        valorPIS: safeDouble(map['valorPIS']),
+        valorCOFINS: safeDouble(map['valorCOFINS']),
         pagamentos: (map['pagamentos'] as List<dynamic>?)
                 ?.map((e) => NFePagamento.fromMap(Map<String, dynamic>.from(e)))
                 .toList() ??
@@ -484,7 +486,7 @@ class NFe {
             : const NFeTransporte(),
         informacoesFisco: map['informacoesFisco'] as String?,
         informacoesContribuinte: map['informacoesContribuinte'] as String?,
-        status: NFeStatus.fromJson(map['status'] as String? ?? 'rascunho'),
+        status: NFeStatus.fromJson(safeStr(map['status'], 'rascunho')),
         protocolo: map['protocolo'] as String?,
         lote: map['lote'] as String?,
         recibo: map['recibo'] as String?,

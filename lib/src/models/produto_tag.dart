@@ -1,3 +1,5 @@
+import 'safe_cast.dart';
+
 class ProdutoTag {
   final String nome;
   final String? cor;
@@ -16,7 +18,7 @@ class ProdutoTag {
 
   factory ProdutoTag.fromJson(Map<String, dynamic> json) {
     return ProdutoTag(
-      nome: json['nome'] as String,
+      nome: safeStr(json['nome']),
       cor: json['cor'] as String?,
     );
   }

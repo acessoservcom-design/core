@@ -1,3 +1,5 @@
+import 'safe_cast.dart';
+
 enum CaixaTurnoStatus { aberto, fechado }
 
 class CaixaTurno {
@@ -113,27 +115,27 @@ class CaixaTurno {
 
   factory CaixaTurno.fromJson(Map<String, dynamic> json) {
     return CaixaTurno(
-      id: json['id'] as String,
-      lojaId: json['lojaId'] as String,
+      id: json['id'] as String? ?? '',
+      lojaId: json['lojaId'] as String? ?? '',
       empresaId: json['empresaId'] as String? ?? '',
-      operadorId: json['operadorId'] as String,
+      operadorId: json['operadorId'] as String? ?? '',
       operadorNome: json['operadorNome'] as String?,
       terminalId: json['terminalId'] as String?,
-      dataAbertura: DateTime.parse(json['dataAbertura'] as String).toUtc(),
+      dataAbertura: safeDate(json['dataAbertura']) ?? DateTime.now().toUtc(),
       dataFechamento: json['dataFechamento'] != null
-          ? DateTime.parse(json['dataFechamento'] as String).toUtc()
+          ? safeDate(json['dataFechamento']) ?? DateTime.now().toUtc()
           : null,
-      saldoInicial: (json['saldoInicial'] as num).toDouble(),
-      saldoFinal: (json['saldoFinal'] as num?)?.toDouble(),
-      totalDinheiro: (json['totalDinheiro'] as num?)?.toDouble(),
-      totalCartao: (json['totalCartao'] as num?)?.toDouble(),
-      totalPix: (json['totalPix'] as num?)?.toDouble(),
-      totalOutros: (json['totalOutros'] as num?)?.toDouble(),
-      diferenca: (json['diferenca'] as num?)?.toDouble(),
+      saldoInicial: safeDouble(json['saldoInicial']),
+      saldoFinal: safeDouble(json['saldoFinal']),
+      totalDinheiro: safeDouble(json['totalDinheiro']),
+      totalCartao: safeDouble(json['totalCartao']),
+      totalPix: safeDouble(json['totalPix']),
+      totalOutros: safeDouble(json['totalOutros']),
+      diferenca: safeDouble(json['diferenca']),
       observacao: json['observacao'] as String?,
       status: CaixaTurnoStatus.values.firstWhere((s) => s.name == json['status']),
-      createdAt: DateTime.parse(json['createdAt'] as String).toUtc(),
-      updatedAt: DateTime.parse(json['updatedAt'] as String).toUtc(),
+      createdAt: safeDate(json['createdAt']) ?? DateTime.now().toUtc(),
+      updatedAt: safeDate(json['updatedAt']) ?? DateTime.now().toUtc(),
     );
   }
 
@@ -210,15 +212,15 @@ class CaixaMovimento {
 
   factory CaixaMovimento.fromJson(Map<String, dynamic> json) {
     return CaixaMovimento(
-      id: json['id'] as String,
-      turnoId: json['turnoId'] as String,
+      id: json['id'] as String? ?? '',
+      turnoId: json['turnoId'] as String? ?? '',
       empresaId: json['empresaId'] as String? ?? '',
       tipo: CaixaMovimentoTipo.values.firstWhere((t) => t.name == json['tipo']),
-      valor: (json['valor'] as num).toDouble(),
+      valor: safeDouble(json['valor']),
       formaPagamento: json['formaPagamento'] as String? ?? 'dinheiro',
       referenciaId: json['referenciaId'] as String?,
       descricao: json['descricao'] as String?,
-      createdAt: DateTime.parse(json['createdAt'] as String).toUtc(),
+      createdAt: safeDate(json['createdAt']) ?? DateTime.now().toUtc(),
     );
   }
 

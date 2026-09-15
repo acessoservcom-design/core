@@ -1,3 +1,5 @@
+import 'safe_cast.dart';
+
 /// Configuração de conexão com o ACBrMonitor (emissão NFC-e).
 ///
 /// Armazenada por loja em campos planos `nfce*` no documento da loja.
@@ -26,10 +28,10 @@ class AcbrConfig {
 
   factory AcbrConfig.fromMap(Map<String, dynamic> map) => AcbrConfig(
         host: map['nfceHost'] as String? ?? 'localhost',
-        port: map['nfcePort'] as int? ?? 3434,
-        ativo: map['nfceAtivo'] as bool? ?? false,
-        serie: map['nfceSerie'] as int? ?? 1,
-        numeroInicial: map['nfceNumeroInicial'] as int?,
+        port: safeInt(map['nfcePort'], 3434),
+        ativo: safeBool(map['nfceAtivo'], false),
+        serie: safeInt(map['nfceSerie'], 1),
+        numeroInicial: safeInt(map['nfceNumeroInicial']),
       );
 
   AcbrConfig copyWith({

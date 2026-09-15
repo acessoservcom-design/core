@@ -1,3 +1,5 @@
+import 'safe_cast.dart';
+
 class Permissao {
   final String id;
   final String nome;
@@ -39,14 +41,14 @@ class Permissao {
 
   factory Permissao.fromMap(Map<String, dynamic> map, {String? id}) {
     return Permissao(
-      id: id ?? map['id'] as String,
-      nome: map['nome'] as String,
+      id: id ?? map['id'] as String? ?? '',
+      nome: map['nome'] as String? ?? '',
       descricao: (map['descricao'] as String?) ?? '',
       menusAutorizados: (map['menusAutorizados'] as List<dynamic>?)?.cast<String>() ?? [],
-      empresaId: map['empresaId'] as String,
-      ativo: map['ativo'] as bool? ?? true,
+      empresaId: map['empresaId'] as String? ?? '',
+      ativo: safeBool(map['ativo'], true),
       criadoEm: _parseDate(map['criadoEm']) ?? DateTime.now(),
-      criadoPor: map['criadoPor'] as String,
+      criadoPor: map['criadoPor'] as String? ?? '',
     );
   }
 

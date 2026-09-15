@@ -1,6 +1,7 @@
 import 'produto_variacao.dart';
 import 'produto_tag.dart';
 import 'fiscal_info.dart';
+import 'safe_cast.dart';
 
 enum TipoProduto {
   fisico,
@@ -61,9 +62,9 @@ class EstoquePorLoja {
 
   factory EstoquePorLoja.fromJson(Map<String, dynamic> json) {
     return EstoquePorLoja(
-      atual: (json['atual'] as num).toInt(),
-      minimo: (json['minimo'] as num).toInt(),
-      precoVenda: (json['precoVenda'] as num).toDouble(),
+      atual: safeInt(json['atual']),
+      minimo: safeInt(json['minimo']),
+      precoVenda: safeDouble(json['precoVenda']),
       embalagem: json['embalagem'] as String?,
     );
   }
@@ -240,15 +241,15 @@ class Produto {
 
   factory Produto.fromJson(Map<String, dynamic> json) {
     return Produto(
-      id: json['id'] as String,
-      nome: json['nome'] as String,
+      id: json['id'] as String? ?? '',
+      nome: json['nome'] as String? ?? '',
       codigoBarras: json['codigoBarras'] as String?,
       sku: json['sku'] as String?,
       tipo: (json['tipo'] as String?) != null
           ? TipoProduto.values.firstWhere((e) => e.name == json['tipo'])
           : TipoProduto.fisico,
-      precoCusto: (json['precoCusto'] as num?)?.toDouble(),
-      precoPromocional: (json['precoPromocional'] as num?)?.toDouble(),
+      precoCusto: safeNum(json['precoCusto'])?.toDouble(),
+      precoPromocional: safeNum(json['precoPromocional'])?.toDouble(),
       marca: json['marca'] as String?,
       categoriaId: json['categoriaId'] as String?,
       ncm: json['ncm'] as String?,
@@ -256,16 +257,16 @@ class Produto {
       cest: json['cest'] as String?,
       localizacao: json['localizacao'] as String?,
       descricaoCurta: json['descricaoCurta'] as String?,
-      comissaoPercentual: (json['comissaoPercentual'] as num?)?.toDouble(),
+      comissaoPercentual: safeNum(json['comissaoPercentual'])?.toDouble(),
       fornecedorId: json['fornecedorId'] as String?,
-      ativo: json['ativo'] as bool? ?? true,
+      ativo: safeBool(json['ativo']),
       estoquePorLoja:
           (json['estoquePorLoja'] as Map<String, dynamic>?)?.map(
                 (k, v) => MapEntry(k, EstoquePorLoja.fromJson(v as Map<String, dynamic>)),
               ) ??
               {},
       imagens: (json['imagens'] as List<dynamic>?)
-              ?.map((e) => e as String)
+              ?.map((e) => e.toString())
               .toList() ??
           [],
       fotoPrincipal: json['fotoPrincipal'] as String?,
@@ -284,8 +285,8 @@ class Produto {
           ? PesosInfo.fromJson(json['pesos'] as Map<String, dynamic>)
           : const PesosInfo(),
       descricaoCompleta: json['descricaoCompleta'] as String?,
-      createdAt: _fromIsoUtc(json['createdAt'] as String),
-      updatedAt: _fromIsoUtc(json['updatedAt'] as String),
+      createdAt: safeDate(json['createdAt']) ?? DateTime.now().toUtc(),
+      updatedAt: safeDate(json['updatedAt']) ?? DateTime.now().toUtc(),
     );
   }
 

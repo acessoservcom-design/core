@@ -127,6 +127,12 @@ class Loja {
   }
 
   factory Loja.fromMap(Map<String, dynamic> map, {String? docId}) {
+    bool toBool(dynamic v) {
+      if (v is bool) return v;
+      if (v is num) return v != 0;
+      if (v is String) return v == '1' || v.toLowerCase() == 'true';
+      return false;
+    }
     return Loja(
       id: map['id'] as String? ?? docId ?? '',
       empresaId: map['empresaId'] as String? ?? '',
@@ -142,9 +148,9 @@ class Loja {
       cidade: map['cidade'] as String?,
       estado: map['estado'] as String?,
       cep: map['cep'] as String?,
-      matriz: map['matriz'] as bool? ?? false,
-      ativo: map['ativo'] as bool? ?? map['ativa'] as bool? ?? true,
-      modulos: (map['modulos'] as List<dynamic>?)?.map((e) => e as String).toList() ?? [],
+      matriz: toBool(map['matriz']),
+      ativo: toBool(map['ativo'] ?? map['ativa']),
+      modulos: (map['modulos'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [],
       nfce: AcbrConfig.fromMap(map),
       emitente: EmitenteConfig.fromMap(map),
       createdAt: DateTime.now(),

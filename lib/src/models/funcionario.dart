@@ -1,3 +1,5 @@
+import 'safe_cast.dart';
+
 enum PapelFuncionario { admin, gerente, vendedor, caixa, fiscal, estoque }
 
 class Funcionario {
@@ -83,22 +85,22 @@ class Funcionario {
 
   factory Funcionario.fromJson(Map<String, dynamic> json) {
     return Funcionario(
-      id: json['id'] as String,
-      empresaId: json['empresaId'] as String,
+      id: json['id'] as String? ?? '',
+      empresaId: json['empresaId'] as String? ?? '',
       lojaId: json['lojaId'] as String?,
-      nome: json['nome'] as String,
-      email: json['email'] as String,
+      nome: json['nome'] as String? ?? '',
+      email: json['email'] as String? ?? '',
       celular: json['celular'] as String?,
-      pinHash: json['pinHash'] as String,
+      pinHash: json['pinHash'] as String? ?? '',
       papel: PapelFuncionario.values.firstWhere((p) => p.name == json['papel']),
       permissoesIds: (json['permissoesIds'] as List<dynamic>?)
-              ?.map((e) => e as String)
+              ?.map((e) => e.toString())
               .toList() ??
           [],
-      comissaoPercentual: (json['comissaoPercentual'] as num?)?.toDouble() ?? 0.0,
-      ativo: json['ativo'] as bool? ?? true,
-      createdAt: DateTime.parse(json['createdAt'] as String).toUtc(),
-      updatedAt: DateTime.parse(json['updatedAt'] as String).toUtc(),
+      comissaoPercentual: safeDouble(json['comissaoPercentual']),
+      ativo: safeBool(json['ativo'], true),
+      createdAt: safeDate(json['createdAt']) ?? DateTime.now().toUtc(),
+      updatedAt: safeDate(json['updatedAt']) ?? DateTime.now().toUtc(),
     );
   }
 

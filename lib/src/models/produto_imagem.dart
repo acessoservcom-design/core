@@ -1,3 +1,5 @@
+import 'safe_cast.dart';
+
 class ProdutoImagem {
   final String? id;
   final String url;
@@ -13,9 +15,9 @@ class ProdutoImagem {
 
   factory ProdutoImagem.fromMap(Map<String, dynamic> map) {
     return ProdutoImagem(
-      url: map['url'] as String,
-      ordem: map['ordem'] as int? ?? 0,
-      principal: map['principal'] as bool? ?? false,
+      url: safeStr(map['url']),
+      ordem: safeInt(map['ordem'], 0),
+      principal: safeBool(map['principal'], false),
     );
   }
 

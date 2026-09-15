@@ -1,4 +1,5 @@
 import 'role.dart';
+import 'safe_cast.dart';
 
 class Usuario {
   final String uid;
@@ -75,23 +76,23 @@ class Usuario {
             ?.cast<String>() ??
         (map['empresaId'] != null ? [empresaId] : []);
     return Usuario(
-      uid: map['uid'] as String,
+      uid: map['uid'] as String? ?? '',
       empresaId: empresaId,
       empresaIds: empresaIds,
-      nome: map['nome'] as String,
-      email: map['email'] as String,
+      nome: map['nome'] as String? ?? '',
+      email: map['email'] as String? ?? '',
       telefone: map['telefone'] as String?,
-      role: Role.fromString(map['role'] as String),
-      lojaId: map['lojaId'] as String,
-      ativo: map['ativo'] as bool? ?? true,
-      comissao: (map['comissao'] as num?)?.toDouble(),
+      role: Role.fromString(map['role'] as String? ?? ''),
+      lojaId: map['lojaId'] as String? ?? '',
+      ativo: safeBool(map['ativo'], true),
+      comissao: safeDouble(map['comissao']),
       permissoesIds: (map['permissoesIds'] as List<dynamic>?)?.cast<String>() ?? [],
       lojasIds: (map['lojasIds'] as List<dynamic>?)?.cast<String>() ?? [],
       criadoEm: _parseDate(map['criadoEm']) ?? DateTime.now(),
       ultimoLogin: _parseDate(map['ultimoLogin']),
-      criadoPor: map['criadoPor'] as String,
+      criadoPor: map['criadoPor'] as String? ?? '',
       avatarUrl: map['avatarUrl'] as String?,
-      isSuperAdmin: map['isSuperAdmin'] as bool? ?? false,
+      isSuperAdmin: safeBool(map['isSuperAdmin'], false),
     );
   }
 

@@ -1,3 +1,5 @@
+import 'safe_cast.dart';
+
 enum VendaStatus { finalizada, cancelada, pendente_transmissao }
 
 class Venda {
@@ -103,26 +105,26 @@ class Venda {
 
   factory Venda.fromJson(Map<String, dynamic> json) {
     return Venda(
-      id: json['id'] as String,
-      lojaId: json['lojaId'] as String,
-      empresaId: json['empresaId'] as String,
-      terminalId: json['terminalId'] as String,
+      id: json['id'] as String? ?? '',
+      lojaId: json['lojaId'] as String? ?? '',
+      empresaId: json['empresaId'] as String? ?? '',
+      terminalId: json['terminalId'] as String? ?? '',
       funcionarioId: json['funcionarioId'] as String?,
       clienteId: json['clienteId'] as String?,
-      codigo: (json['codigo'] as num).toInt(),
+      codigo: safeInt(json['codigo']),
       itens: (json['itens'] as List<dynamic>)
           .map((e) => ItemVenda.fromJson(e as Map<String, dynamic>))
           .toList(),
       pagamentos: (json['pagamentos'] as List<dynamic>)
           .map((e) => PagamentoVenda.fromJson(e as Map<String, dynamic>))
           .toList(),
-      desconto: (json['desconto'] as num?)?.toDouble() ?? 0.0,
+      desconto: safeDouble(json['desconto']),
       observacao: json['observacao'] as String?,
       status: VendaStatus.values.firstWhere((s) => s.name == json['status']),
       nfceChave: json['nfceChave'] as String?,
       nfceStatus: json['nfceStatus'] as String?,
-      createdAt: DateTime.parse(json['createdAt'] as String).toUtc(),
-      updatedAt: DateTime.parse(json['updatedAt'] as String).toUtc(),
+      createdAt: safeDate(json['createdAt']) ?? DateTime.now().toUtc(),
+      updatedAt: safeDate(json['updatedAt']) ?? DateTime.now().toUtc(),
     );
   }
 
@@ -203,14 +205,14 @@ class ItemVenda {
 
   factory ItemVenda.fromJson(Map<String, dynamic> json) {
     return ItemVenda(
-      id: json['id'] as String,
-      produtoId: json['produtoId'] as String,
-      nome: json['nome'] as String,
+      id: json['id'] as String? ?? '',
+      produtoId: json['produtoId'] as String? ?? '',
+      nome: json['nome'] as String? ?? '',
       sku: json['sku'] as String?,
       variacao: json['variacao'] as String?,
-      quantidade: (json['quantidade'] as num).toDouble(),
-      precoUnitario: (json['precoUnitario'] as num).toDouble(),
-      total: (json['total'] as num).toDouble(),
+      quantidade: safeDouble(json['quantidade']),
+      precoUnitario: safeDouble(json['precoUnitario']),
+      total: safeDouble(json['total']),
     );
   }
 
@@ -269,10 +271,10 @@ class PagamentoVenda {
 
   factory PagamentoVenda.fromJson(Map<String, dynamic> json) {
     return PagamentoVenda(
-      id: json['id'] as String,
-      forma: json['forma'] as String,
-      valor: (json['valor'] as num).toDouble(),
-      parcelas: (json['parcelas'] as num?)?.toInt(),
+      id: json['id'] as String? ?? '',
+      forma: json['forma'] as String? ?? '',
+      valor: safeDouble(json['valor']),
+      parcelas: safeInt(json['parcelas']),
       bandeira: json['bandeira'] as String?,
     );
   }

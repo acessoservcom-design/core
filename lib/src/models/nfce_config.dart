@@ -1,3 +1,5 @@
+import 'safe_cast.dart';
+
 class NfceConfig {
   final int serie;
   final int contadorAtual;
@@ -46,12 +48,12 @@ class NfceConfig {
 
   factory NfceConfig.fromJson(Map<String, dynamic> json) {
     return NfceConfig(
-      serie: (json['serie'] as num).toInt(),
-      contadorAtual: (json['contadorAtual'] as num?)?.toInt() ?? 0,
+      serie: safeInt(json['serie']),
+      contadorAtual: safeInt(json['contadorAtual']),
       hostHomologacao: json['hostHomologacao'] as String?,
       hostProducao: json['hostProducao'] as String?,
       certificadoDigital: json['certificadoDigital'] as String?,
-      ambiente: (json['ambiente'] as num?)?.toInt() ?? 1,
+      ambiente: safeInt(json['ambiente'], 1),
     );
   }
 }

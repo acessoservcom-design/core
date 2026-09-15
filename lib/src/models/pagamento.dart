@@ -1,3 +1,5 @@
+import 'safe_cast.dart';
+
 class Pagamento {
   final String forma;
   final double valor;
@@ -15,9 +17,9 @@ class Pagamento {
 
   factory Pagamento.fromMap(Map<String, dynamic> map) {
     return Pagamento(
-      forma: map['forma'] as String,
-      valor: (map['valor'] as num).toDouble(),
-      parcelas: map['parcelas'] as int?,
+      forma: map['forma'] as String? ?? '',
+      valor: safeDouble(map['valor']),
+      parcelas: safeInt(map['parcelas']),
       bandeira: map['bandeira'] as String?,
       maquininha: map['maquininha'] as String?,
     );
