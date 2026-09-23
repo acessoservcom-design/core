@@ -4,7 +4,7 @@ import '../utils/result.dart';
 abstract class IUsuarioRepository {
   Future<Result<Usuario?>> buscarPorUid(String uid);
   Future<Result<Usuario?>> buscarAtual();
-  Future<Result<void>> salvar(Usuario usuario, {String? senha});
+  Future<Result<String?>> salvar(Usuario usuario, {String? senha});
   Future<Result<void>> atualizarCampos(String uid, Map<String, dynamic> campos);
   Future<Result<void>> atualizarUltimoLogin();
   Stream<Result<List<Usuario>>> streamPorLoja(String lojaId);
