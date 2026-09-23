@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'safe_cast.dart';
 
 class Endereco {
@@ -157,31 +159,59 @@ class Cliente {
   }
 
   factory Cliente.fromJson(Map<String, dynamic> json) {
+    // API MySQL: cpf/cnpj/limite_credito/loja_ids (snake) ou modelo camelCase
+    final cpf = json['cpf'] as String?;
+    final cnpj = json['cnpj'] as String?;
+    final cpfCnpj = json['cpfCnpj'] as String? ?? cnpj ?? cpf;
+
+    dynamic lojaIdsRaw = json['lojaIds'] ?? json['loja_ids'];
+    List<String> lojaIds = [];
+    if (lojaIdsRaw is List) {
+      lojaIds = lojaIdsRaw.map((e) => e.toString()).toList();
+    } else if (lojaIdsRaw is String && lojaIdsRaw.isNotEmpty) {
+      try {
+        final decoded = jsonDecode(lojaIdsRaw);
+        if (decoded is List) {
+          lojaIds = decoded.map((e) => e.toString()).toList();
+        }
+      } catch (_) {}
+    }
+
+    Endereco endereco;
+    if (json['endereco'] != null) {
+      endereco = Endereco.fromJson(json['endereco'] as Map<String, dynamic>);
+    } else {
+      endereco = Endereco(
+        cep: json['cep'] as String? ?? '',
+        logradouro: json['logradouro'] as String? ?? '',
+        numero: json['numero'] as String? ?? '',
+        complemento: json['complemento'] as String?,
+        bairro: json['bairro'] as String? ?? '',
+        cidade: json['cidade'] as String? ?? '',
+        estado: json['estado'] as String? ?? '',
+      );
+    }
+
     return Cliente(
       id: json['id'] as String? ?? '',
-      empresaId: json['empresaId'] as String? ?? '',
+      empresaId: (json['empresaId'] ?? json['empresa_id']) as String? ?? '',
       nome: json['nome'] as String? ?? '',
-      cpfCnpj: json['cpfCnpj'] as String?,
+      cpfCnpj: cpfCnpj,
       rg: json['rg'] as String?,
       email: json['email'] as String?,
       telefone: json['telefone'] as String?,
       celular: json['celular'] as String?,
-      endereco: json['endereco'] != null
-          ? Endereco.fromJson(json['endereco'] as Map<String, dynamic>)
-          : const Endereco(),
-      limiteCredito: safeNum(json['limiteCredito'])?.toDouble(),
-      tabelaPrecoId: json['tabelaPrecoId'] as String?,
+      endereco: endereco,
+      limiteCredito: safeNum(json['limiteCredito'] ?? json['limite_credito'])?.toDouble(),
+      tabelaPrecoId: (json['tabelaPrecoId'] ?? json['tabela_preco_id']) as String?,
       debito: safeDouble(json['debito']),
-      lojaIds: (json['lojaIds'] as List<dynamic>?)
-              ?.map((e) => e.toString())
-              .toList() ??
-          [],
+      lojaIds: lojaIds,
       observacao: json['observacao'] as String?,
-      ultimaCompra: safeDate(json['ultimaCompra']),
+      ultimaCompra: safeDate(json['ultimaCompra'] ?? json['ultima_compra']),
       pontos: safeInt(json['pontos']),
       ativo: safeBool(json['ativo']),
-      createdAt: safeDateUtc(json['createdAt']),
-      updatedAt: safeDateUtc(json['updatedAt']),
+      createdAt: safeDateUtc(json['createdAt'] ?? json['created_at']),
+      updatedAt: safeDateUtc(json['updatedAt'] ?? json['updated_at']),
     );
   }
 
