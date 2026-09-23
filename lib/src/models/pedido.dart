@@ -215,12 +215,12 @@ class Pedido {
       clienteNome: sn(json, 'clienteNome', 'cliente_nome'),
       clienteTelefone: sn(json, 'clienteTelefone', 'cliente_telefone'),
       clienteEmail: sn(json, 'clienteEmail', 'cliente_email'),
-      codigo: n(json, 'codigo', 'codigo')?.toInt() ?? 0,
+      codigo: n(json, 'codigo', 'codigo')?.toInt() ?? _parsePidCodigo(json['pid'] ?? json['codigo']),
       status: PedidoStatus.values.firstWhere(
         (e) => e.name == json['status'],
         orElse: () => PedidoStatus.rascunho,
       ),
-      itens: (json['itens'] as List<dynamic>?)
+      itens: ((json['itens'] ?? json['items']) as List<dynamic>?)
               ?.map((e) => ItemPedido.fromJson(Map<String, dynamic>.from(e as Map)))
               .toList() ??
           [],
@@ -259,6 +259,13 @@ class Pedido {
     final v = j[c] ?? j[s];
     if (v == null) return null;
     return DateTime.tryParse(v.toString())?.toUtc();
+  }
+
+  static int _parsePidCodigo(dynamic v) {
+    if (v == null) return 0;
+    final match = RegExp(r'(\d+)').firstMatch(v.toString());
+    if (match == null) return 0;
+    return int.tryParse(match.group(1) ?? '') ?? 0;
   }
 
   @override
@@ -347,9 +354,11 @@ class ItemPedido {
     return ItemPedido(
       id: s('id', 'id'),
       produtoId: s('produtoId', 'produto_id'),
-      nome: s('nome', 'nome'),
+      nome: s('nome', 'produto_nome'),
       quantidade: n('quantidade', 'quantity')?.toDouble() ?? 0,
-      precoUnitario: n('precoUnitario', 'preco_unitario')?.toDouble() ?? 0,
+      precoUnitario: n('precoUnitario', 'valor_unitario')?.toDouble() ??
+          n('precoUnitario', 'preco_unitario')?.toDouble() ??
+          0,
       total: n('total')?.toDouble() ?? 0,
       personalizacao: json['personalizacao']?.toString() ?? '',
       variacaoTipo: json['variacaoTipo']?.toString() ?? json['variacao_tipo']?.toString(),

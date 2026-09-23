@@ -68,6 +68,7 @@ enum Role {
           'dashboard', 'pdv', 'clientes', 'orcamentos', 'vendas_gestao',
           'comissoes', 'lancamentos', 'nfce', 'pedidos',
           'caixa_abertura', 'caixa_fechamento', 'caixa_historico',
+          'estoque_consulta', 'movimentacao',
         },
       Role.atendentePedidos => {
           'clientes', 'pedidos',

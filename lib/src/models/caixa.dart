@@ -114,28 +114,41 @@ class CaixaTurno {
   }
 
   factory CaixaTurno.fromJson(Map<String, dynamic> json) {
+    String? sn(String c, String s) {
+      final v = json[c] ?? json[s];
+      return v?.toString();
+    }
+
+    final statusStr = sn('status', 'status') ?? 'aberto';
     return CaixaTurno(
       id: json['id'] as String? ?? '',
-      lojaId: json['lojaId'] as String? ?? '',
-      empresaId: json['empresaId'] as String? ?? '',
-      operadorId: json['operadorId'] as String? ?? '',
-      operadorNome: json['operadorNome'] as String?,
-      terminalId: json['terminalId'] as String?,
-      dataAbertura: safeDate(json['dataAbertura']) ?? DateTime.now().toUtc(),
-      dataFechamento: json['dataFechamento'] != null
-          ? safeDate(json['dataFechamento']) ?? DateTime.now().toUtc()
+      lojaId: sn('lojaId', 'loja_id') ?? '',
+      empresaId: sn('empresaId', 'empresa_id') ?? '',
+      operadorId: sn('operadorId', 'operador_id') ?? '',
+      operadorNome: sn('operadorNome', 'operador_nome'),
+      terminalId: sn('terminalId', 'terminal_id'),
+      dataAbertura: safeDate(json['dataAbertura'] ?? json['data_abertura']) ??
+          DateTime.now().toUtc(),
+      dataFechamento: (json['dataFechamento'] ?? json['data_fechamento']) != null
+          ? safeDate(json['dataFechamento'] ?? json['data_fechamento']) ??
+              DateTime.now().toUtc()
           : null,
-      saldoInicial: safeDouble(json['saldoInicial']),
-      saldoFinal: safeDouble(json['saldoFinal']),
-      totalDinheiro: safeDouble(json['totalDinheiro']),
-      totalCartao: safeDouble(json['totalCartao']),
-      totalPix: safeDouble(json['totalPix']),
-      totalOutros: safeDouble(json['totalOutros']),
+      saldoInicial: safeDouble(json['saldoInicial'] ?? json['saldo_inicial']),
+      saldoFinal: safeDouble(json['saldoFinal'] ?? json['saldo_final']),
+      totalDinheiro: safeDouble(json['totalDinheiro'] ?? json['total_dinheiro']),
+      totalCartao: safeDouble(json['totalCartao'] ?? json['total_cartao']),
+      totalPix: safeDouble(json['totalPix'] ?? json['total_pix']),
+      totalOutros: safeDouble(json['totalOutros'] ?? json['total_outros']),
       diferenca: safeDouble(json['diferenca']),
       observacao: json['observacao'] as String?,
-      status: CaixaTurnoStatus.values.firstWhere((s) => s.name == json['status']),
-      createdAt: safeDate(json['createdAt']) ?? DateTime.now().toUtc(),
-      updatedAt: safeDate(json['updatedAt']) ?? DateTime.now().toUtc(),
+      status: CaixaTurnoStatus.values.firstWhere(
+        (s) => s.name == statusStr,
+        orElse: () => CaixaTurnoStatus.aberto,
+      ),
+      createdAt:
+          safeDate(json['createdAt'] ?? json['created_at']) ?? DateTime.now().toUtc(),
+      updatedAt:
+          safeDate(json['updatedAt'] ?? json['updated_at']) ?? DateTime.now().toUtc(),
     );
   }
 
@@ -211,16 +224,24 @@ class CaixaMovimento {
   }
 
   factory CaixaMovimento.fromJson(Map<String, dynamic> json) {
+    final tipoStr = (json['tipo'] ?? '').toString();
     return CaixaMovimento(
       id: json['id'] as String? ?? '',
-      turnoId: json['turnoId'] as String? ?? '',
-      empresaId: json['empresaId'] as String? ?? '',
-      tipo: CaixaMovimentoTipo.values.firstWhere((t) => t.name == json['tipo']),
+      turnoId: (json['turnoId'] ?? json['turno_id'])?.toString() ?? '',
+      empresaId: (json['empresaId'] ?? json['empresa_id'])?.toString() ?? '',
+      tipo: CaixaMovimentoTipo.values.firstWhere(
+        (t) => t.name == tipoStr,
+        orElse: () => CaixaMovimentoTipo.entrada,
+      ),
       valor: safeDouble(json['valor']),
-      formaPagamento: json['formaPagamento'] as String? ?? 'dinheiro',
-      referenciaId: json['referenciaId'] as String?,
-      descricao: json['descricao'] as String?,
-      createdAt: safeDate(json['createdAt']) ?? DateTime.now().toUtc(),
+      formaPagamento:
+          (json['formaPagamento'] ?? json['forma_pagamento'])?.toString() ??
+              'dinheiro',
+      referenciaId:
+          (json['referenciaId'] ?? json['referencia_id'])?.toString(),
+      descricao: json['descricao']?.toString(),
+      createdAt:
+          safeDate(json['createdAt'] ?? json['created_at']) ?? DateTime.now().toUtc(),
     );
   }
 
