@@ -32,6 +32,7 @@ export 'src/models/produto_imagem.dart';
 export 'src/models/produto_tag.dart';
 export 'src/models/produto_variacao.dart';
 export 'src/models/quittance.dart';
+export 'src/models/safe_cast.dart';
 export 'src/models/receivable.dart';
 export 'src/models/role.dart';
 export 'src/models/tabela_preco.dart';
