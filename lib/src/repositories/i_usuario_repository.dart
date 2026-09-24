@@ -10,7 +10,11 @@ abstract class IUsuarioRepository {
   Stream<Result<List<Usuario>>> streamPorLoja(String lojaId);
   Stream<Result<List<Usuario>>> streamVendedores(String lojaId);
   Future<Result<List<Usuario>>> buscarTodos({String? lojaId});
-  Future<Result<String>> uploadAvatar(
-      {required String usuarioId, required String filePath});
+  Future<Result<String>> uploadAvatar({
+    required String usuarioId,
+    String? filePath,
+    List<int>? bytes,
+    String? fileName,
+  });
   Future<Result<void>> deletarImagem(String url);
 }
